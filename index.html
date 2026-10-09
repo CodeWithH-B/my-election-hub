@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECI Results Hub 2026 — Live Bye-Election Results & Voter Services</title>
+    <meta name="description" content="Live results for West Bengal Assembly Bye-Elections October 2026. Round-wise, candidate-wise, and constituency-wise data plus voter services.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #05060f;
+            --bg-secondary: #0d0f1f;
+            --card: rgba(255, 255, 255, 0.04);
+            --card-hover: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.08);
+            --border-hover: rgba(255, 255, 255, 0.2);
+            --text-primary: #ffffff;
+            --text-secondary: #a1a8c0;
+            --text-muted: #6b7290;
+            --accent-primary: #ff3d71;
+            --accent-secondary: #00e5ff;
+            --accent-tertiary: #ffcc3d;
+            --accent-quaternary: #b18cff;
+            --success: #00e08a;
+            --gradient-1: linear-gradient(135deg, #ff3d71 0%, #b18cff 100%);
+            --gradient-2: linear-gradient(135deg, #00e5ff 0%, #0088ff 100%);
+            --gradient-3: linear-gradient(135deg, #ffcc3d 0%, #ff6b3d 100%);
+            --gradient-4: linear-gradient(135deg, #00e08a 0%, #00b4d8 100%);
+            --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 40px rgba(255, 61, 113, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-primary: #f5f7ff;
+            --bg-secondary: #ffffff;
+            --card: rgba(255, 255, 255, 0.7);
+            --card-hover: rgba(255, 255, 255, 0.95);
+            --border: rgba(0, 0, 0, 0.08);
+            --border-hover: rgba(0, 0, 0, 0.15);
+            --text-primary: #0a0c1a;
+            --text-secondary: #4a5070;
+            --text-muted: #8890a8;
+            --shadow-lg: 0 20px 60px rgba(80, 90, 150, 0.15);
+            --shadow-glow: 0 0 40px rgba(255, 61, 113, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html { scroll-behavior: smooth; }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
+            line-height: 1.5;
+        }
+
+        /* ===== ANIMATED BACKGROUND ===== */
+        .bg-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            background: var(--bg-primary);
+            overflow: hidden;
+        }
+
+        .bg-canvas::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(255, 61, 113, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(0, 229, 255, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(177, 140, 255, 0.15) 0%, transparent 45%);
+            animation: orbMove 25s ease-in-out infinite alternate;
+        }
+
+        [data-theme="light"] .bg-canvas::before {
+            background-image:
+                radial-gradient(circle at 15% 20%, rgba(255, 61, 113, 0.12) 0%, transparent 40%),
+                radial-gradient(circle at 85% 30%, rgba(0, 229, 255, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 90%, rgba(177, 140, 255, 0.12) 0%, transparent 45%);
+        }
+
+        @keyframes orbMove {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(3%, -2%) scale(1.05); }
+            100% { transform: translate(-2%, 3%) scale(0.98); }
+        }
+
+        .bg-grid {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            background-image:
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 80%);
+            pointer-events: none;
+        }
+
+        [data-theme="light"] .bg-grid {
+            background-image:
+                linear-gradient(rgba(0, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.03) 1px, transparent 1px);
+        }
+
+        /* ===== SCROLL PROGRESS ===== */
+        .scroll-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 3px;
+            width: 0%;
+            background: var(--gradient-1);
+            z-index: 1000;
+            transition: width 0.1s ease;
+            box-shadow: 0 0 12px var(--accent-primary);
+        }
+
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 16px 24px;
+            background: rgba(5, 6, 15, 0.7);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border-bottom: 1px solid var(--border);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="light"] .navbar {
+            background: rgba(245, 247, 255, 0.8);
+        }
+
+        .navbar.scrolled {
+            padding: 12px 24px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .nav-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.15rem;
+            color: var(--text-primary);
+            text-decoration: none;
+            letter-spacing: -0.5px;
+        }
+
+        .nav-logo-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            box-shadow: 0 4px 16px rgba(255, 61, 113, 0.4);
+        }
+
+        .nav-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            background: var(--card);
+            color: var(--text-primary);
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .icon-btn:hover {
+            background: var(--card-hover);
+            border-color: var(--border-hover);
+            transform: translateY(-2px);
+        }
+
+        .icon-btn.active {
+            background: var(--accent-primary);
+            border-color: var(--accent-primary);
+            color: #fff;
+        }
+
+        /* ===== HERO ===== */
+        .hero {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 80px 24px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 18px;
+            background: rgba(255, 61, 113, 0.1);
+            border: 1px solid rgba(255, 61, 113, 0.3);
+            border-radius: 100px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: var(--accent-primary);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 24px;
+            backdrop-filter: blur(10px);
+            animation: fadeUp 0.6s ease both;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            position: relative;
+        }
+
+        .live-dot::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: var(--accent-primary);
+            animation: liveRipple 1.8s ease-out infinite;
+        }
+
+        @keyframes liveRipple {
+            0% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(2.5); opacity: 0; }
+        }
+
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 6vw, 4rem);
+            font-weight: 700;
+            line-height: 1.05;
+            letter-spacing: -2px;
+            margin-bottom: 20px;
+            animation: fadeUp 0.6s 0.1s ease both;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(135deg, #ff3d71 0%, #b18cff 50%, #00e5ff 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 6s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% center; }
+            50% { background-position: 100% center; }
+        }
+
+        .hero p {
+            font-size: clamp(0.95rem, 2vw, 1.15rem);
+            color: var(--text-secondary);
+            max-width: 640px;
+            margin: 0 auto 40px;
+            line-height: 1.7;
+            animation: fadeUp 0.6s 0.2s ease both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ===== STATS ===== */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            max-width: 900px;
+            margin: 0 auto 60px;
+            padding: 0 24px;
+            animation: fadeUp 0.6s 0.3s ease both;
+        }
+
+        @media (min-width: 640px) {
+            .stats-row { grid-template-columns: repeat(4, 1fr); }
+        }
+
+        .stat-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 16px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gradient-1);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-hover);
+            box-shadow: var(--shadow-md);
+        }
+
+        .stat-card:hover::before { opacity: 1; }
+
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.9rem;
+            font-weight: 700;
+            letter-spacing: -1px;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 0.72rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* ===== CONTROLS ===== */
+        .controls {
+            max-width: 1200px;
+            margin: 0 auto 32px;
+            padding: 0 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            animation: fadeUp 0.6s 0.4s ease both;
+        }
+
+        @media (min-width: 768px) {
+            .controls {
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 18px 14px 48px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            font-weight: 500;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            color: var(--text-primary);
+            outline: none;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .search-box input::placeholder { color: var(--text-muted); }
+
+        .search-box input:focus {
+            border-color: var(--accent-primary);
+            background: var(--card-hover);
+            box-shadow: 0 0 0 4px rgba(255, 61, 113, 0.15);
+        }
+
+        .search-box .search-icon {
+            position: absolute;
+            left: 18px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1rem;
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        .search-box input:focus + .search-icon { color: var(--accent-primary); }
+
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            border: none;
+            background: var(--card-hover);
+            color: var(--text-muted);
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            transition: all 0.2s ease;
+        }
+
+        .search-clear.visible { display: flex; }
+        .search-clear:hover { background: var(--accent-primary); color: #fff; }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            padding: 5px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            backdrop-filter: blur(20px);
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .filter-tabs::-webkit-scrollbar { display: none; }
+
+        .filter-tab {
+            padding: 9px 18px;
+            border-radius: 10px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.25s ease;
+        }
+
+        .filter-tab:hover {
+            color: var(--text-primary);
+            background: var(--card-hover);
+        }
+
+        .filter-tab.active {
+            background: var(--gradient-1);
+            color: #fff;
+            box-shadow: 0 4px 16px rgba(255, 61, 113, 0.3);
+        }
+
+        /* ===== SECTIONS ===== */
+        .sections-wrap {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px 80px;
+        }
+
+        .section-block {
+            margin-bottom: 48px;
+            animation: fadeUp 0.5s ease both;
+        }
+
+        .section-block[data-hidden="true"] { display: none; }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-icon {
+            width: 44px;
+            height: 44px;
+            min-width: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+        }
+
+        .section-info { flex: 1; min-width: 0; }
+
+        .section-info h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .section-info .section-meta {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+            font-weight: 500;
+        }
+
+        .section-tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 8px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        /* ===== CARDS ===== */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        @media (min-width: 640px) {
+            .cards-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        .result-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 18px;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+        }
+
+        .result-card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(255, 61, 113, 0.1), transparent 40%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .result-card:hover::before { opacity: 1; }
+
+        .result-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-hover);
+            background: var(--card-hover);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            min-width: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .result-card:hover .card-icon {
+            transform: scale(1.15) rotate(-8deg);
+        }
+
+        .icon-rose { background: rgba(255, 61, 113, 0.15); color: var(--accent-primary); }
+        .icon-cyan { background: rgba(0, 229, 255, 0.15); color: var(--accent-secondary); }
+        .icon-gold { background: rgba(255, 204, 61, 0.15); color: var(--accent-tertiary); }
+        .icon-violet { background: rgba(177, 140, 255, 0.15); color: var(--accent-quaternary); }
+        .icon-mint { background: rgba(0, 224, 138, 0.15); color: var(--success); }
+
+        .card-content { flex: 1; min-width: 0; }
+
+        .card-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            line-height: 1.3;
+            transition: color 0.2s ease;
+        }
+
+        .result-card:hover .card-title { color: var(--accent-primary); }
+
+        .card-url {
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            word-break: break-all;
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .card-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .action-btn {
+            width: 34px;
+            height: 34px;
+            border-radius: 10px;
+            border: none;
+            background: var(--card-hover);
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.25s ease;
+            position: relative;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-primary);
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        .action-btn.fav-active {
+            background: var(--accent-tertiary);
+            color: #05060f;
+        }
+
+        .action-btn.fav-active svg { fill: currentColor; }
+
+        .go-arrow {
+            transition: transform 0.3s ease;
+        }
+
+        .result-card:hover .go-arrow {
+            transform: translateX(3px);
+            color: var(--accent-primary);
+        }
+
+        /* ===== EMPTY STATE ===== */
+        .empty-state {
+            display: none;
+            text-align: center;
+            padding: 80px 24px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state.visible { display: block; animation: fadeUp 0.4s ease; }
+
+        .empty-state-icon {
+            font-size: 3.5rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .empty-state p { font-size: 0.9rem; }
+
+        /* ===== FOOTER ===== */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 40px 24px 60px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="light"] .footer { background: rgba(255, 255, 255, 0.4); }
+
+        .footer-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .footer-disclaimer {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 18px;
+            background: rgba(255, 204, 61, 0.08);
+            border: 1px solid rgba(255, 204, 61, 0.2);
+            border-radius: 100px;
+            font-size: 0.78rem;
+            color: var(--accent-tertiary);
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 8px 20px;
+            margin-bottom: 24px;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: color 0.2s ease;
+        }
+
+        .footer-links a:hover { color: var(--accent-primary); }
+
+        .footer-credit {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            line-height: 1.8;
+        }
+
+        .footer-credit .heart {
+            color: var(--accent-primary);
+            display: inline-block;
+            animation: heartBeat 1.4s ease infinite;
+        }
+
+        @keyframes heartBeat {
+            0%, 100% { transform: scale(1); }
+            25% { transform: scale(1.2); }
+            50% { transform: scale(1); }
+        }
+
+        /* ===== TOAST ===== */
+        .toast-wrap {
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            background: rgba(0, 224, 138, 0.95);
+            color: #05060f;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            box-shadow: 0 10px 40px rgba(0, 224, 138, 0.4);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            backdrop-filter: blur(10px);
+            white-space: nowrap;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .toast.toast-error {
+            background: rgba(255, 61, 113, 0.95);
+            box-shadow: 0 10px 40px rgba(255, 61, 113, 0.4);
+            color: #fff;
+        }
+
+        /* ===== KEYBOARD HINT ===== */
+        .kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            font-family: 'Space Grotesk', monospace;
+            font-size: 0.7rem;
+            font-weight: 600;
+            background: var(--card-hover);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-muted);
+        }
+
+        /* ===== BACK TO TOP ===== */
+        .back-to-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            border: 1px solid var(--border);
+            background: var(--card);
+            backdrop-filter: blur(20px);
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99;
+            opacity: 0;
+            transform: translateY(20px) scale(0.9);
+            pointer-events: none;
+            transition: all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+            pointer-events: auto;
+        }
+
+        .back-to-top:hover {
+            background: var(--gradient-1);
+            color: #fff;
+            border-color: transparent;
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .hero { padding: 50px 20px 30px; }
+            .nav-logo-text { display: none; }
+            .section-header { flex-wrap: wrap; }
+            .section-tag { order: -1; margin-left: auto; }
+            .result-card { padding: 14px; gap: 12px; }
+            .card-icon { width: 42px; height: 42px; min-width: 42px; font-size: 1.1rem; }
+            .card-title { font-size: 0.88rem; }
+            .card-url { font-size: 0.68rem; }
+            .card-actions { flex-direction: row; }
+            .action-btn { width: 30px; height: 30px; font-size: 0.78rem; }
+            .back-to-top { bottom: 16px; right: 16px; width: 44px; height: 44px; }
+        }
+
+        /* ===== SELECTION ===== */
+        ::selection {
+            background: var(--accent-primary);
+            color: #fff;
+        }
+
+        /* ===== FOCUS RING ===== */
+        :focus-visible {
+            outline: 2px solid var(--accent-primary);
+            outline-offset: 2px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-canvas"></div>
+    <div class="bg-grid"></div>
+
+    <div class="scroll-progress" id="scrollProgress"></div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="nav-logo">
+                <div class="nav-logo-icon">🗳️</div>
+                <span class="nav-logo-text">ECI Results Hub</span>
+            </a>
+            <div class="nav-actions">
+                <button class="icon-btn" id="favFilterBtn" title="Show favorites only">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                    </svg>
+                </button>
+                <button class="icon-btn" id="themeToggle" title="Toggle theme">
+                    <span id="themeIcon">🌙</span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <header class="hero">
+        <div class="hero-badge">
+            <span class="live-dot"></span>
+            <span>Live Results • October 2026</span>
+        </div>
+        <h1>
+            West Bengal<br>
+            <span class="gradient-text">Bye-Election Hub</span>
+        </h1>
+        <p>Access live round-wise, candidate-wise, and constituency-wise results for the October 2026 Assembly Bye-Elections — plus official voter services, all in one place.</p>
+    </header>
+
+    <!-- STATS -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-value" data-count="2">0</div>
+            <div class="stat-label">Constituencies</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" data-count="8">0</div>
+            <div class="stat-label">Total Links</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">WB</div>
+            <div class="stat-label">State</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="liveClock">--:--</div>
+            <div class="stat-label">Local Time</div>
+        </div>
+    </div>
+
+    <!-- CONTROLS -->
+    <div class="controls">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search results…  (press / to focus)" autocomplete="off">
+            <span class="search-icon">🔍</span>
+            <button class="search-clear" id="searchClear" title="Clear search">✕</button>
+        </div>
+        <div class="filter-tabs" id="filterTabs">
+            <button class="filter-tab active" data-filter="all">All</button>
+            <button class="filter-tab" data-filter="results">Results</button>
+            <button class="filter-tab" data-filter="nandigram">Nandigram</button>
+            <button class="filter-tab" data-filter="rejinagar">Rejinagar</button>
+            <button class="filter-tab" data-filter="voter">Voter Services</button>
+        </div>
+    </div>
+
+    <!-- SECTIONS -->
+    <main class="sections-wrap" id="sectionsWrap">
+
+        <!-- Main Index -->
+        <section class="section-block" data-category="results" data-search="main index portal results october 2026">
+            <div class="section-header">
+                <div class="section-icon">📊</div>
+                <div class="section-info">
+                    <h2>Main Results Portal</h2>
+                    <div class="section-meta">Central hub for all October 2026 results</div>
+                </div>
+                <span class="section-tag">Index</span>
+            </div>
+            <div class="cards-grid">
+                <a class="result-card" href="https://results.eci.gov.in/ResultAcByeOct2026/index.htm" target="_blank" rel="noopener"
+                   data-search="results index october 2026 main portal"
+                   data-url="https://results.eci.gov.in/ResultAcByeOct2026/index.htm">
+                    <div class="card-icon icon-cyan">🏠</div>
+                    <div class="card-content">
+                        <div class="card-title">Results Index — October 2026</div>
+                        <div class="card-url">results.eci.gov.in/ResultAcByeOct2026/index.htm</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn fav-btn" data-id="main-index" title="Add to favorites">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </button>
+                        <button class="action-btn copy-btn" data-url="https://results.eci.gov.in/ResultAcByeOct2026/index.htm" title="Copy link">📋</button>
+                        <span class="action-btn go-arrow" style="background:transparent;cursor:default;">→</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Nandigram -->
+        <section class="section-block" data-category="nandigram" data-search="nandigram ac 210 west bengal">
+            <div class="section-header">
+                <div class="section-icon">📍</div>
+                <div class="section-info">
+                    <h2>Nandigram</h2>
+                    <div class="section-meta">Assembly Constituency 210 · West Bengal</div>
+                </div>
+                <span class="section-tag">AC 210</span>
+            </div>
+            <div class="cards-grid">
+                <a class="result-card" href="https://results.eci.gov.in/ResultAcByeOct2026/RoundwiseS25210.htm?ac=210" target="_blank" rel="noopener"
+                   data-search="nandigram round wise results"
+                   data-url="https://results.eci.gov.in/ResultAcByeOct2026/RoundwiseS25210.htm?ac=210">
+                    <div class="card-icon icon-gold">🔄</div>
+                    <div class="card-content">
+                        <div class="card-title">Round-wise Results</div>
+                        <div class="card-url">RoundwiseS25210.htm?ac=210</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn fav-btn" data-id="nandigram-round" title="Add to favorites">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </button>
+                        <button class="action-btn copy-btn" data-url="https://results.eci.gov.in/ResultAcByeOct2026/RoundwiseS25210.htm?ac=210" title="Copy link">📋</button>
+                        <span class="action-btn go-arrow" style="background:transparent;cursor:default;">→</span>
+                    </div>
+                </a>
+                <a class="result-card" href="https://results.eci.gov.in/ResultAcByeOct2026/candidateswise-S25210.htm" target="_blank" rel="noopener"
+                   data-search="nandigram candidate wise results"
+                   data-url="https://results.eci.gov.in/ResultAcByeOct2026/candidateswise-S25210.htm">
+                    <div class="card-icon icon-violet">👤</div>
+                    <div class="card-content">
+                        <div class="card-title">Candidate-wise Results</div>
+                        <div class="card-url">candidateswise-S25210.htm</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn fav-btn" data-id="nandigram-candidate" title="Add to favorites">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </button>
+                        <button class="action-btn copy-btn" data-url="https://results.eci.gov.in/ResultAcByeOct2026/candidateswise-S25210.htm" title="Copy link">📋</button>
+                        <span class="action-btn go-arrow" style="background:transparent;cursor:default;">→</span>
+                    </div>
+                </a>
+                <a class="result-card" href="https://results.eci.gov.in/ResultAcByeOct2026/ConstituencywiseS25210.htm" target="_blank" rel="noopener"
+                   data-search="nandigram constituency wise summary"
+                   data-url="https://results.eci.gov.in/ResultAcByeOct2026/ConstituencywiseS25210.htm">
+                    <div class="card-icon icon-mint">📋</div>
+                    <div class="card-content">
+                        <div class="card-title">Constituency-wise Summary</div>
+                        <div class="card-url">ConstituencywiseS25210.htm</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn fav-btn" data-id="nandigram-constituency" title="Add to favorites">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </button>
+                        <button class="action-btn copy-btn" data-url="https://results.eci.gov.in/ResultAcByeOct2026/ConstituencywiseS25210.htm" title="Copy link">📋</button>
+                        <span class="action-btn go-arrow" style="background:transparent;cursor:default;">→</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Rejinagar -->
+        <section class="section-block" data-category="rejinagar" data-search="rejinagar ac 70 west bengal">
+            <div class="section-header">
+                <div class="section-icon">📍</div>
+                <div class="section-info">
+                    <h2>Rejinagar</h2>
+                    <div class="section-meta">Assembly Constituency 70 · West Bengal</div>
+                </div>
+                <span class="section-tag">AC 70</span>
+            </div>
+            <div class="cards-grid">
+                <a class="result-card" href="https://results.eci.gov.in/ResultAcByeOct2026/RoundwiseS2570.htm?ac=70" target="_blank" rel="noopener"
+                   data-search="rejinagar round wise results"
+                   data-url="https://results.eci.gov.in/ResultAcByeOct2026/RoundwiseS2570.htm?ac=70">
+                    <div class="card-icon icon-gold">🔄</div>
+                    <div class="card-content">
+                        <div class="card-title">Round-wise Results</div>
+                        <div class="card-url">RoundwiseS2570.htm?ac=70</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn fav-btn" data-id="rejinagar-round" title="Add to favorites">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </button>
+                        <button class="action-btn copy-btn" data-url="https://results.eci.gov.in/ResultAcByeOct2026/RoundwiseS2570.htm?ac=70" title="Copy link">📋</button>
+                        <span class="action-btn go-arrow" style="background:transparent;cursor:default;">→</span>
+                    </div>
+                </a>
+                <a class="result-card" href="https://results.eci.gov.in/ResultAcByeOct2026/candidateswise-S2570.htm" target="_blank" rel="noopener"
+                   data-search="rejinagar candidate wise results"
+                   data-url="https://results.eci.gov.in/ResultAcByeOct2026/candidateswise-S2570.htm">
+                    <div class="card-icon icon-violet">👤</div>
+                    <div class="card-content">
+                        <div class="card-title">Candidate-wise Results</div>
+                        <div class="card-url">candidateswise-S2570.htm</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn fav-btn" data-id="rejinagar-candidate" title="Add to favorites">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </button>
+                        <button class="action-btn copy-btn" data-url="https://results.eci.gov.in/ResultAcByeOct2026/candidateswise-S2570.htm" title="Copy link">📋</button>
+                        <span class="action-btn go-arrow" style="background:transparent;cursor:default;">→</span>
+                    </div>
+                </a>
+                <a class="result-card" href="https://results.eci.gov.in/ResultAcByeOct2026/ConstituencywiseS2570.htm" target="_blank" rel="noopener"
+                   data-search="rejinagar constituency wise summary"
+                   data-url="https://results.eci.gov.in/ResultAcByeOct2026/ConstituencywiseS2570.htm">
+                    <div class="card-icon icon-mint">📋</div>
+                    <div class="card-content">
+                        <div class="card-title">Constituency-wise Summary</div>
+                        <div class="card-url">ConstituencywiseS2570.htm</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn fav-btn" data-id="rejinagar-constituency" title="Add to favorites">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </button>
+                        <button class="action-btn copy-btn" data-url="https://results.eci.gov.in/ResultAcByeOct2026/ConstituencywiseS2570.htm" title="Copy link">📋</button>
+                        <span class="action-btn go-arrow" style="background:transparent;cursor:default;">→</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Voter Services -->
+        <section class="section-block" data-category="voter" data-search="voter services electoral roll e-roll download">
+            <div class="section-header">
+                <div class="section-icon">🪪</div>
+                <div class="section-info">
+                    <h2>Voter Services</h2>
+                    <div class="section-meta">Official ECI voter services portal</div>
+                </div>
+                <span class="section-tag">ECI</span>
+            </div>
+            <div class="cards-grid">
+                <a class="result-card" href="https://voters.eci.gov.in/download-eroll" target="_blank" rel="noopener"
+                   data-search="download electoral roll e-roll voter list"
+                   data-url="https://voters.eci.gov.in/download-eroll">
+                    <div class="card-icon icon-rose">📥</div>
+                    <div class="card-content">
+                        <div class="card-title">Download Electoral Roll (E-Roll)</div>
+                        <div class="card-url">voters.eci.gov.in/download-eroll</div>
+                    </div>
+                    <div class="card-actions">
+                        <button class="action-btn fav-btn" data-id="eroll" title="Add to favorites">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                            </svg>
+                        </button>
+                        <button class="action-btn copy-btn" data-url="https://voters.eci.gov.in/download-eroll" title="Copy link">📋</button>
+                        <span class="action-btn go-arrow" style="background:transparent;cursor:default;">→</span>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState">
+            <div class="empty-state-icon">🔍</div>
+            <h3>No results found</h3>
+            <p>Try a different search term or clear your filters.</p>
+        </div>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-disclaimer">
+                ⚠️ Data displayed as filled in by Returning Officers. Final data shared in Form-20.
+            </div>
+            <div class="footer-links">
+                <a href="https://results.eci.gov.in/ResultAcByeOct2026/index.htm" target="_blank" rel="noopener">Results Portal</a>
+                <a href="https://voters.eci.gov.in/download-eroll" target="_blank" rel="noopener">E-Roll Download</a>
+                <a href="https://www.eci.gov.in" target="_blank" rel="noopener">Election Commission of India</a>
+            </div>
+            <div class="footer-credit">
+                Built with <span class="heart">❤️</span> for informed citizens · Source: Election Commission of India<br>
+                <span class="kbd">/</span> to search · <span class="kbd">Esc</span> to clear
+            </div>
+        </div>
+    </footer>
+
+    <!-- BACK TO TOP -->
+    <button class="back-to-top" id="backToTop" title="Back to top">↑</button>
+
+    <!-- TOAST -->
+    <div class="toast-wrap" id="toastWrap"></div>
+
+    <script>
+        // ===== THEME =====
+        const body = document.body;
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = document.getElementById('themeIcon');
+        const savedTheme = localStorage.getItem('theme') || 'dark';
+        if (savedTheme === 'light') {
+            body.setAttribute('data-theme', 'light');
+            themeIcon.textContent = '☀️';
+        }
+        themeToggle.addEventListener('click', () => {
+            const isLight = body.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                body.removeAttribute('data-theme');
+                themeIcon.textContent = '🌙';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                body.setAttribute('data-theme', 'light');
+                themeIcon.textContent = '☀️';
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // ===== SCROLL PROGRESS + NAVBAR + BACK TO TOP =====
+        const scrollProgress = document.getElementById('scrollProgress');
+        const navbar = document.getElementById('navbar');
+        const backToTop = document.getElementById('backToTop');
+
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrollTop = window.scrollY;
+                    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+                    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+                    scrollProgress.style.width = progress + '%';
+
+                    if (scrollTop > 20) navbar.classList.add('scrolled');
+                    else navbar.classList.remove('scrolled');
+
+                    if (scrollTop > 400) backToTop.classList.add('visible');
+                    else backToTop.classList.remove('visible');
+
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        });
+
+        backToTop.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+
+        // ===== COUNTER ANIMATION =====
+        const counters = document.querySelectorAll('[data-count]');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const el = entry.target;
+                    const target = parseInt(el.dataset.count);
+                    let current = 0;
+                    const duration = 1000;
+                    const start = performance.now();
+                    const tick = (now) => {
+                        const elapsed = now - start;
+                        const p = Math.min(elapsed / duration, 1);
+                        const eased = 1 - Math.pow(1 - p, 3);
+                        current = Math.floor(eased * target);
+                        el.textContent = current;
+                        if (p < 1) requestAnimationFrame(tick);
+                        else el.textContent = target;
+                    };
+                    requestAnimationFrame(tick);
+                    counterObserver.unobserve(el);
+                }
+            });
+        }, { threshold: 0.5 });
+        counters.forEach(c => counterObserver.observe(c));
+
+        // ===== LIVE CLOCK =====
+        const liveClock = document.getElementById('liveClock');
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            liveClock.textContent = h + ':' + m;
+        }
+        updateClock();
+        setInterval(updateClock, 10000);
+
+        // ===== SEARCH + FILTER =====
+        const searchInput = document.getElementById('searchInput');
+        const searchClear = document.getElementById('searchClear');
+        const filterTabs = document.querySelectorAll('.filter-tab');
+        const sections = document.querySelectorAll('.section-block');
+        const emptyState = document.getElementById('emptyState');
+        const favFilterBtn = document.getElementById('favFilterBtn');
+
+        let currentFilter = 'all';
+        let favOnly = false;
+
+        function applyFilters() {
+            const query = searchInput.value.toLowerCase().trim();
+            let visibleCount = 0;
+
+            sections.forEach(section => {
+                const category = section.dataset.category || '';
+                const sectionSearch = (section.dataset.search || '').toLowerCase();
+
+                // Filter match
+                const filterMatch = currentFilter === 'all' || category === currentFilter;
+
+                // Favorites check
+                let favMatch = true;
+                if (favOnly) {
+                    const favCards = section.querySelectorAll('.fav-btn.fav-active');
+                    favMatch = favCards.length > 0;
+                }
+
+                // Search match
+                let searchMatch = true;
+                if (query) {
+                    const sectionTextMatch = sectionSearch.includes(query);
+                    // Also check individual cards
+                    let cardMatch = false;
+                    section.querySelectorAll('.result-card').forEach(card => {
+                        const cardSearch = (card.dataset.search || '').toLowerCase();
+                        if (cardSearch.includes(query)) cardMatch = true;
+                    });
+                    searchMatch = sectionTextMatch || cardMatch;
+                }
+
+                if (filterMatch && favMatch && searchMatch) {
+                    section.removeAttribute('data-hidden');
+                    visibleCount++;
+                } else {
+                    section.setAttribute('data-hidden', 'true');
+                }
+            });
+
+            emptyState.classList.toggle('visible', visibleCount === 0);
+            searchClear.classList.toggle('visible', query.length > 0);
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            applyFilters();
+            searchInput.focus();
+        });
+
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.dataset.filter;
+                applyFilters();
+            });
+        });
+
+        favFilterBtn.addEventListener('click', () => {
+            favOnly = !favOnly;
+            favFilterBtn.classList.toggle('active', favOnly);
+            applyFilters();
+            showToast(favOnly ? '⭐ Showing favorites only' : '✨ Showing all results');
+        });
+
+        // ===== FAVORITES =====
+        const favState = JSON.parse(localStorage.getItem('favorites') || '{}');
+
+        document.querySelectorAll('.fav-btn').forEach(btn => {
+            const id = btn.dataset.id;
+            if (favState[id]) btn.classList.add('fav-active');
+
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const isActive = btn.classList.toggle('fav-active');
+                if (isActive) {
+                    favState[id] = true;
+                    showToast('⭐ Added to favorites');
+                } else {
+                    delete favState[id];
+                    showToast('Removed from favorites');
+                }
+                localStorage.setItem('favorites', JSON.stringify(favState));
+                if (favOnly) applyFilters();
+            });
+        });
+
+        // ===== COPY LINK =====
+        const toastWrap = document.getElementById('toastWrap');
+
+        document.querySelectorAll('.copy-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                const url = btn.dataset.url;
+                const originalText = btn.textContent;
+
+                const onSuccess = () => {
+                    btn.textContent = '✓';
+                    btn.style.background = 'var(--success)';
+                    btn.style.color = '#05060f';
+                    showToast('📋 Link copied to clipboard');
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.style.background = '';
+                        btn.style.color = '';
+                    }, 1500);
+                };
+
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(url).then(onSuccess).catch(() => fallbackCopy(url, onSuccess));
+                } else {
+                    fallbackCopy(url, onSuccess);
+                }
+            });
+        });
+
+        function fallbackCopy(text, cb) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.opacity = '0';
+            document.body.appendChild(ta);
+            ta.select();
+            try {
+                document.execCommand('copy');
+                cb();
+            } catch (e) {
+                showToast('Copy failed', true);
+            }
+            document.body.removeChild(ta);
+        }
+
+        // ===== TOAST =====
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.className = 'toast' + (isError ? ' toast-error' : '');
+            toast.textContent = message;
+            toastWrap.appendChild(toast);
+            requestAnimationFrame(() => toast.classList.add('show'));
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 400);
+            }, 2400);
+        }
+
+        // ===== MOUSE TRACKING ON CARDS =====
+        document.querySelectorAll('.result-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                card.style.setProperty('--mouse-x', x + '%');
+                card.style.setProperty('--mouse-y', y + '%');
+            });
+        });
+
+        // ===== KEYBOARD SHORTCUTS =====
+        document.addEventListener('keydown', (e) => {
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+                searchInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+            if (e.key === 'Escape' && document.activeElement === searchInput) {
+                searchInput.value = '';
+                applyFilters();
+                searchInput.blur();
+            }
+        });
+
+        // ===== CARD CLICK RIPPLE =====
+        document.querySelectorAll('.result-card').forEach(card => {
+            card.addEventListener('click', function (e) {
+                if (e.target.closest('.action-btn')) return;
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height) * 1.5;
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const ripple = document.createElement('span');
+                ripple.style.cssText = `
+                    position: absolute;
+                    left: ${x - size / 2}px;
+                    top: ${y - size / 2}px;
+                    width: ${size}px;
+                    height: ${size}px;
+                    border-radius: 50%;
+                    background: radial-gradient(circle, rgba(255, 61, 113, 0.35) 0%, transparent 70%);
+                    transform: scale(0);
+                    animation: rippleEffect 0.7s ease-out forwards;
+                    pointer-events: none;
+                    z-index: 1;
+                `;
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 700);
+            });
+        });
+
+        const rippleStyle = document.createElement('style');
+        rippleStyle.textContent = `
+            @keyframes rippleEffect {
+                to { transform: scale(1); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(rippleStyle);
+
+        // ===== INITIAL REVEAL ANIMATIONS =====
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+        document.querySelectorAll('.section-block').forEach((section, i) => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = `opacity 0.6s ${i * 0.08}s ease, transform 0.6s ${i * 0.08}s ease`;
+            revealObserver.observe(section);
+        });
+
+        // ===== PREVENT DEFAULT FOR BUTTONS IN CARDS =====
+        document.querySelectorAll('.action-btn').forEach(btn => {
+            btn.addEventListener('click', e => e.stopPropagation());
+        });
+    </script>
+</body>
+</html>
